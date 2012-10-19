@@ -1,20 +1,29 @@
 package com.biciv.android;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
+import com.actionbarsherlock.app.SherlockActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends SherlockActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        getSupportActionBar();
     }
 
-    @Override
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+    
+    
+
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
-    }
+    }*/
 }
