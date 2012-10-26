@@ -9,13 +9,13 @@ public class MainActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        getSupportActionBar();
     }
 
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+		
+		getSupportActionBar().hide();
 		return true;
 	}
     
