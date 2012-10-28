@@ -7,5 +7,7 @@
     <string name="singleBikeStation_tabNameStats">Estadísticas</string>
     <string name="singleBikeStation_tabNameMap">Localización</string>
     <string name="singleBikeStation_tabNameSocial">Social</string>
+    <string name="singleBikeStation_availableBikes">bicis</string>
+    <string name="singleBikeStation_availableSlots">bornetas</string>
 
 </resources>

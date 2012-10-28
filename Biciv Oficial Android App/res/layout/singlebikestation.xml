@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <ProgressBar
-        android:id="@+id/progressBar1"
+        android:id="@+id/singleBikeStation_progressBikesAndSlots"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,19 +19,43 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
 
-        <TextView
-            android:id="@+id/availableBikes"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="TextView" />
+            android:layout_alignParentLeft="true" >
 
-        <TextView
-            android:id="@+id/availableSlots"
+            <TextView
+                android:id="@+id/singleBikeStation_availableBikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3sp"
+                android:text="@string/singleBikeStation_availableBikes" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="TextView" />
+            android:layout_alignParentRight="true" >
+
+            <TextView
+                android:id="@+id/singleBikeStation_availableSlots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3sp"
+                android:text="@string/singleBikeStation_availableSlots" />
+
+        </LinearLayout>
     </RelativeLayout>
 
     <TabHost
@@ -50,13 +74,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" >
             </FrameLayout>
-
-<!--             <FrameLayout -->
-<!--                 android:id="@+id/singleBikeStation_tabContent" -->
-<!--                 android:layout_width="match_parent" -->
-<!--                 android:layout_height="0dp" -->
-<!--                 android:layout_weight="1" > -->
-<!--             </FrameLayout> -->
 
             <TabWidget
                 android:id="@android:id/tabs"

@@ -12,7 +12,9 @@ public class MainActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        startActivity(new Intent(this, SingleBikeStation.class));
+        Intent singleBikeStationActivity = new Intent(this, SingleBikeStation.class);
+        singleBikeStationActivity.putExtra(SingleBikeStation.Params.BIKE_STATION_ID.toString(), 264);
+        startActivity(singleBikeStationActivity);
     }
 
 	@Override
