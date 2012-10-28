@@ -19,6 +19,13 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 	private Fragment fragmentStats;
 	private Fragment fragmentMap;
 	
+	private static String tabTagSTATS = "STATS";
+	private static String tabTagMAP = "MAP";
+	private static String tabTagSOCIAL = "SOCIAL";
+	
+	/*
+	 * It put an empty view as a container of the fragment.
+	 * */
 	private class TabFactory implements TabHost.TabContentFactory {
 		private final Context mContext;
 		
@@ -42,39 +49,35 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 		initialiseTabHost(savedInstanceState);
 	}
 
-	/**
+	/*
 	* Setup TabHost
 	*/
 	private void initialiseTabHost(Bundle savedInstanceState) {
 		mTabHost = (TabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setup();
 		
-		//****** tab1 start
-		TabHost.TabSpec tabSpec_statistics = mTabHost.newTabSpec("STATS");
-		tabSpec_statistics.setIndicator("Estadísticas");
-		tabSpec_statistics.setContent(new TabFactory(this));
-		String tagStats = tabSpec_statistics.getTag();
-		
 		FragmentManager fm = this.getSupportFragmentManager();
-		fragmentStats = fm.findFragmentByTag(tagStats);
+		
+		//****** tab1 start
+		TabHost.TabSpec tabSpec_statistics = mTabHost.newTabSpec(tabTagSTATS);
+		tabSpec_statistics.setIndicator(getString(R.string.singleBikeStation_tabNameStats));
+		tabSpec_statistics.setContent(new TabFactory(this));
+		mTabHost.addTab(tabSpec_statistics);
+		
+		fragmentStats = fm.findFragmentByTag(tabTagSTATS);
 		if(fragmentStats == null)
 			fragmentStats = Fragment.instantiate(this, SingleBikeStation_tabStatistics.class.getName(), savedInstanceState);
-		
-		mTabHost.addTab(tabSpec_statistics);
 		//****** tab1 end
 		
 		//****** tab2 start
-		TabHost.TabSpec tabSpec_map = mTabHost.newTabSpec("MAP");
-		tabSpec_map.setIndicator("Mapa");
+		TabHost.TabSpec tabSpec_map = mTabHost.newTabSpec(tabTagMAP);
+		tabSpec_map.setIndicator(getString(R.string.singleBikeStation_tabNameMap));
 		tabSpec_map.setContent(new TabFactory(this));
-		String tagMap = tabSpec_map.getTag();
+		mTabHost.addTab(tabSpec_map);
 		
-		fm = this.getSupportFragmentManager();
-		fragmentMap = fm.findFragmentByTag(tagMap);
+		fragmentMap = fm.findFragmentByTag(tabTagMAP);
 		if(fragmentMap == null)
 			fragmentMap = Fragment.instantiate(this, SingleBikeStation_tabMap.class.getName(), savedInstanceState);
-		
-		mTabHost.addTab(tabSpec_map);
 		//****** tab2 end
 		
 		OnTabChangeListener listener = null;
@@ -83,7 +86,7 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 			@Override
 			public void onTabChanged(String tabTagToOpen) {
 				Fragment newTab = null;
-				if(tabTagToOpen == "STATS")
+				if(tabTagToOpen == tabTagSTATS)
 					newTab = fragmentStats;
 				else
 					newTab = fragmentMap;
@@ -95,8 +98,8 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 			}
 		});
 		
-		// Default to first tab
-		listener.onTabChanged("STATS");
+		// Default first tab
+		listener.onTabChanged(tabTagSTATS);
 	}
 
 }
