@@ -1,5 +1,6 @@
 package com.biciv.android.activities;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.biciv.android.R;
 
 import android.app.Activity;
@@ -12,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
-public class SingleBikeStation_tabStatistics extends Fragment {
+public class SingleBikeStation_tabStatistics extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

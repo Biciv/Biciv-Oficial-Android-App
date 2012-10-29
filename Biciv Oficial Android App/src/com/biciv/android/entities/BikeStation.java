@@ -24,7 +24,10 @@ public class BikeStation {
 		this.available = available;
 		this.free = free;
 		this.lastCheck = lastCheck;
-		//this.incidents = new Incidents(outOfService, brokenBikes, bloquedSlots);
+		
+		this.incidents.add(outOfService);
+		this.incidents.add(brokenBikes);
+		this.incidents.add(bloquedSlots);
 	}
 	
 	public int getId() {

@@ -23,6 +23,7 @@ import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
 import com.biciv.android.entities.BikeStation;
 import com.biciv.android.managers.BikeStationManager;
 import com.biciv.android.managers.Callback;
+import com.google.android.maps.MapView;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
 public class SingleBikeStation extends SherlockFragmentActivity {
@@ -77,7 +78,7 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 			finish();
 			return;
 		}
-
+		
 		initialiseTabHost(savedInstanceState);
 		
 		/*try {
@@ -162,9 +163,9 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 		mTabHost.addTab(tabSpec_map);
 
 		fragmentMap = getSupportFragmentManager().findFragmentByTag(tabTagMAP);
-		if(fragmentMap == null)
+		if(fragmentMap == null) {
 			fragmentMap = Fragment.instantiate(this, SingleBikeStation_tabMap.class.getName(), savedInstanceState);
-		//****** tab2 end
+		}//****** tab2 end
 
 		OnTabChangeListener listener = null;
 		mTabHost.setOnTabChangedListener(listener=new TabHost.OnTabChangeListener() {

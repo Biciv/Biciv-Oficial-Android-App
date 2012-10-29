@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/singleBikeStation_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
-</LinearLayout>
+    android:apiKey="0vg9iD3PZ5qqkxwzZkhPPQ_87KpW03CrA39k2zQ"
+    android:clickable="true" />
