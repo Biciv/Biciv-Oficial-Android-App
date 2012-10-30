@@ -85,4 +85,22 @@ public class BikeStation {
 	public boolean isBloquedSlots(){
 		return incidents.get(2);
 	}
+	
+	public static class LastHour {
+		private String start = "0/0/0 0:0:0";
+		private int capacity = 0;
+		private ArrayList<Integer> data;
+		
+		public String getStart() {
+			return start;
+		}
+		public int getCapacity() {
+			return capacity;
+		}
+		public ArrayList<Integer> getData() {
+			return data;
+		}
+		
+		
+	}
 }

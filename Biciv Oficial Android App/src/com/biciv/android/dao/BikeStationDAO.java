@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.biciv.android.entities.BikeStation;
 import com.biciv.android.exceptions.ToastedException;
 import com.biciv.android.managers.Callback;
+import com.biciv.android.managers.LastHourCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -59,6 +60,17 @@ public class BikeStationDAO {
 			Answer answer = gson.fromJson(exampleSyncObject, Answer.class);
 			cachedBikeStations = answer.answer;
 			onSyncEnds.call();
+		} catch(JsonSyntaxException e){
+			onError.call();
+		}
+	}
+	
+	public void getLastHour(int bikeStationID, LastHourCallback onCall , Callback onError){
+		String exampleLastHour = "{\"start\":\"2012/10/30 00:03:08\",\"capacity\":15,\"data\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,14,14]}";		
+		
+		try {
+			BikeStation.LastHour lastHour = new Gson().fromJson(exampleLastHour, BikeStation.LastHour.class);
+			onCall.call(lastHour);
 		} catch(JsonSyntaxException e){
 			onError.call();
 		}

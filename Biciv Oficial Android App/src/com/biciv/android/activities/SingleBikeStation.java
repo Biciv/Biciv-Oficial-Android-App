@@ -18,6 +18,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.biciv.android.R;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
 import com.biciv.android.entities.BikeStation;

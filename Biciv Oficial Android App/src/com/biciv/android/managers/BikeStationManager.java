@@ -15,4 +15,8 @@ public class BikeStationManager {
 	public BikeStation getBikeStation(int bikeStationID) throws NotCachedBikeStation{
 		return new BikeStationDAO().getCachedBikeStation(bikeStationID);
 	}
+	
+	public void askLastHour(int bikeStationID, LastHourCallback onCall , Callback onError){
+		new BikeStationDAO().getLastHour(bikeStationID, onCall, onError);
+	}
 }
