@@ -1,3 +1,6 @@
 [submodule "ActionbarSherlock"]
 	path = ActionbarSherlock
 	url = git://github.com/Bloodsucker/ActionBarSherlock.git
+[submodule "ActionBarSherlock"]
+	path = ActionBarSherlock
+	url = git://github.com/Bloodsucker/ActionBarSherlock.git
