@@ -2,8 +2,14 @@ package com.biciv.android.activities;
 
 import java.util.ArrayList;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Window;
 import com.biciv.android.R;
 import com.biciv.android.entities.BikeStation.LastHour;
 import com.biciv.android.managers.BikeStationManager;
@@ -13,15 +19,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
 //Graph library: http://www.jjoe64.com/p/graphview-library.html
@@ -45,9 +42,14 @@ public class SingleBikeStation_tabStatistics extends SherlockFragment {
 	
 	private void prepareStats(){
 		Integer bikeStationID = getSherlockActivity().getIntent().getExtras().getInt(SingleBikeStation.Params.BIKE_STATION_ID.toString());
-		if(bikeStationID == null){
-			//TODO error.
-		}
+		/*
+		 * This situation is not possible since it is checked in the main activity.
+		 * if(bikeStationID == null){
+			//TODO
+			Toast.makeText(getSherlockActivity(), "Error in fragment params.", Toast.LENGTH_SHORT).show();
+			getSherlockActivity().finish();
+			return;
+		}*/
 		
 		new BikeStationManager().askLastHour(bikeStationID, new LastHourCallback() {
 			
