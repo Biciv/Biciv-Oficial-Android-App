@@ -9,5 +9,6 @@
     <string name="singleBikeStation_tabNameSocial">Social</string>
     <string name="singleBikeStation_availableBikes">bicis</string>
     <string name="singleBikeStation_availableSlots">bornetas</string>
+    <string name="singleBikeStation_tabStatsLoading">Cargando&#8230;</string>
 
 </resources>
