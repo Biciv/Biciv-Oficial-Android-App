@@ -1,11 +1,13 @@
 package com.biciv.android.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.biciv.android.activities.synchronization.BadSynchronization;
 import com.biciv.android.entities.BikeStation;
 import com.biciv.android.exceptions.ToastedException;
 import com.biciv.android.managers.Callback;
@@ -18,6 +20,7 @@ import com.google.gson.JsonSyntaxException;
 public class BikeStationDAO {
 
 	private static HashMap<Integer, BikeStation> cachedBikeStations = null;
+	private static long lastFullCacheTime = -1;
 
 	public BikeStationDAO() {}
 	
@@ -46,7 +49,7 @@ public class BikeStationDAO {
 	/*
 	 * TODO
 	 * */
-	public void forceSync(Callback onSyncEnds , Callback onError){
+	public void forceSync() throws BadSynchronization{
 		//Si c&p:
 			//Buscar y reemplazar: \/ de las fechas por /
 			//Buscar y reemplazar: " por \"
@@ -59,10 +62,15 @@ public class BikeStationDAO {
 		try {
 			Answer answer = gson.fromJson(exampleSyncObject, Answer.class);
 			cachedBikeStations = answer.answer;
-			onSyncEnds.call();
+			
+			lastFullCacheTime = new Date().getTime();
 		} catch(JsonSyntaxException e){
-			onError.call();
+			throw new BadSynchronization();
 		}
+	}
+	
+	public long getLastFullSync(){
+		return lastFullCacheTime;
 	}
 	
 	public void getLastHour(int bikeStationID, LastHourCallback onCall , Callback onError){
