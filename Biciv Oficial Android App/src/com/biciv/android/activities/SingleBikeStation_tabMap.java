@@ -1,6 +1,13 @@
 package com.biciv.android.activities;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.biciv.android.R;
+import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
+import com.biciv.android.entities.BikeStation;
+import com.biciv.android.managers.BikeStationManager;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,22 +19,57 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
-public class SingleBikeStation_tabMap extends Fragment {
-
+public class SingleBikeStation_tabMap extends SherlockFragment {
+	
+	private static View tabMapLayoutView = null;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (container == null) {
-			// We have different layouts, and in one of them this
-			// fragment's containing frame doesn't exist.  The fragment
-			// may still be created from its saved state, but there is
-			// no reason to try to create its view hierarchy because it
-			// won't be displayed.  Note this is not needed -- we could
-			// just run the code below, where we would create and return
-			// the view hierarchy; it would just never be used.
+		if (container == null)
 			return null;
+		
+		/*
+		 * Workarround to resolve the problem with MapView.
+		 * If uses: return inflater.inflate(R.layout.singlebikestation_tabmap, container, false);
+		 * It will throw an exception that MapActivy can only have only one MapView.
+		 * With this the layout view is ever the SAME for this fragment.
+		 * */
+		if(tabMapLayoutView == null)
+			tabMapLayoutView = getSherlockActivity().getLayoutInflater().inflate(R.layout.singlebikestation_tabmap, null);
+		
+		/*
+		 * This resolve the problem with the views that are inside other.
+		 * The tabMapLayoutView layout has parent (the previus container).
+		 * A view can only be inside in only one parent.
+		 * */
+		ViewGroup parent = (ViewGroup) tabMapLayoutView.getParent();
+		if(parent != null)
+			parent.removeView(tabMapLayoutView);
+		
+		configMapView();
+		
+		return tabMapLayoutView;
+	}
+	
+	private void configMapView(){
+
+		MapView mapView = (MapView) tabMapLayoutView.findViewById(R.id.singleBikeStation_map);
+		
+		Integer bikeStationID = getSherlockActivity().getIntent().getExtras().getInt(SingleBikeStation.Params.BIKE_STATION_ID.toString());
+		if(bikeStationID == null){
+			//TODO error.
 		}
 		
-		return inflater.inflate(R.layout.singlebikestation_tabmap, container, false);
+		try {
+			BikeStation bikeStation = new BikeStationManager().getBikeStation(bikeStationID);
+			Double lat = bikeStation.getLat()*1E6;
+			Double lng = bikeStation.getLng()*1E6;
+			MapController mc = mapView.getController();
+			mc.setCenter( new GeoPoint(lat.intValue(), lng.intValue()) );
+			mc.setZoom(18);
+		} catch (NotCachedBikeStation e) {
+			//TODO
+		}
 	}
-
+	
 }
