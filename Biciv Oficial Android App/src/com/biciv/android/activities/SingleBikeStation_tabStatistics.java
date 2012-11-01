@@ -41,14 +41,6 @@ public class SingleBikeStation_tabStatistics extends SherlockFragment {
 	
 	private void prepareStats(){
 		Integer bikeStationID = getSherlockActivity().getIntent().getExtras().getInt(SingleBikeStation.Params.BIKE_STATION_ID.toString());
-		/*
-		 * This situation is not possible since it is checked in the main activity.
-		 * if(bikeStationID == null){
-			//TODO
-			Toast.makeText(getSherlockActivity(), "Error in fragment params.", Toast.LENGTH_SHORT).show();
-			getSherlockActivity().finish();
-			return;
-		}*/
 		
 		new BikeStationManager().askLastHour(bikeStationID, new LastHourCallback() {
 			
