@@ -43,7 +43,6 @@ public class AsyncSystem {
 	public void close(){
 		if(fullSyncTask != null) {
 			fullSyncTask.cancel(true);
-			//fullSyncTask.notify(); //It works?
 		}
 	}
 	
