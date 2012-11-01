@@ -4,5 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="singleBikeStation_tabNameStats">Estadísticas</string>
+    <string name="singleBikeStation_tabNameMap">Localización</string>
+    <string name="singleBikeStation_tabNameSocial">Social</string>
+    <string name="singleBikeStation_availableBikes">bicis</string>
+    <string name="singleBikeStation_availableSlots">bornetas</string>
+    <string name="singleBikeStation_tabStatsLoading">Cargando&#8230;</string>
 
 </resources>
