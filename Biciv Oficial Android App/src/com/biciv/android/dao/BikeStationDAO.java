@@ -1,6 +1,7 @@
 package com.biciv.android.dao;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -29,6 +30,15 @@ public class BikeStationDAO {
 		return cachedBikeStations.get(stationID);
 	}
 	
+	public ArrayList<BikeStation> getCachedBikeStations() throws NotCachedBikeStations {
+		if(cachedBikeStations == null)
+			throw new NotCachedBikeStations();
+		
+		ArrayList<BikeStation> cachedBikeStationsList = new ArrayList<BikeStation>(cachedBikeStations.values());
+		
+		return cachedBikeStationsList;
+	}
+	
 	public class NotCachedBikeStation extends ToastedException{
 		public int stationID;
 		private NotCachedBikeStation(int stationID){
@@ -40,6 +50,18 @@ public class BikeStationDAO {
 		}
 	}
 	
+	public class NotCachedBikeStations extends ToastedException{
+		private NotCachedBikeStations(){
+		}
+		@Override
+		public String toString() {
+			return "Not cached bike stations";
+		}
+	}
+	
+	private class Answer {
+		public HashMap<Integer, BikeStation> answer;
+	}
 	
 	/*
 	 * TODO
