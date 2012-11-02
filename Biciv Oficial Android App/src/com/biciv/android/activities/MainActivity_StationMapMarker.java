@@ -16,20 +16,22 @@ import com.biciv.android.entities.BikeStation;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;
 
-public class MainActivity_MapMarker extends OverlayItem {
+public class MainActivity_StationMapMarker extends OverlayItem {
+	private int mStationID;
 	private int mAvailableBikes;
 	private int mAvailableHollows;
 	private Context mContext;
 	
-	public MainActivity_MapMarker(GeoPoint pt, String label, String snippet, BikeStation bikeStation, Context context) {
+	public MainActivity_StationMapMarker(GeoPoint pt, String label, String snippet, BikeStation bikeStation, Context context) {
 		super(pt, label, snippet);
 		
 		this.mAvailableBikes = bikeStation.getAvailable();
 		this.mAvailableHollows = bikeStation.getFree();
+		this.mStationID = bikeStation.getId();
 		this.mContext = context;
 				
 	}
-
+	
 	public Drawable getDefaultMarker() {
 		Bitmap viewCapture = null;
         Drawable drawOverlay = null;
@@ -63,6 +65,10 @@ public class MainActivity_MapMarker extends OverlayItem {
         drawOverlay = new BitmapDrawable(mContext.getResources(),viewCapture);
         
         return drawOverlay;
+	}
+	
+	public int getStationID(){
+		return this.mStationID;
 	}
 
 }

@@ -14,6 +14,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,12 +80,14 @@ public class MainActivity_tabStationsMap extends SherlockFragment {
 		}
 	}
 	
-	private void loadStationMarker(BikeStation bikeStation){		
+	private void loadStationMarker(BikeStation bikeStation){
+		Context context = getSherlockActivity();
+		
 	    GeoPoint CENTER_POINT = new GeoPoint((int) (bikeStation.getLat() * 1E6), (int) (bikeStation.getLng()* 1E6));
 	    
-		MainActivity_MapMarker mapMarker = new MainActivity_MapMarker(CENTER_POINT, "", "", bikeStation, getSherlockActivity());
-
-		MainActivity_MapOverlay itemizedOverlay = new MainActivity_MapOverlay(mapMarker.getDefaultMarker());
+		MainActivity_StationMapMarker mapMarker = new MainActivity_StationMapMarker(CENTER_POINT, "", "", bikeStation, context);
+		
+		MainActivity_StationMapOverlay itemizedOverlay = new MainActivity_StationMapOverlay(mapMarker.getDefaultMarker(), context);
 			
 		itemizedOverlay.addOverlay(mapMarker);
 		
