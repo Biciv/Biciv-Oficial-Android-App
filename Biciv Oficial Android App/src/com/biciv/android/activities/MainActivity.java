@@ -1,24 +1,41 @@
 package com.biciv.android.activities;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
+import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.biciv.android.R;
 import com.biciv.android.R.layout;
 import com.biciv.android.R.menu;
+import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
+import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStations;
+import com.biciv.android.entities.BikeStation;
+import com.biciv.android.managers.BikeStationManager;
+import com.biciv.android.managers.Callback;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 public class MainActivity extends SherlockFragmentActivity {
 	
 	private TabHost mTabHost;
+	
+	private OnTabChangeListener listener;
 	
 	private Fragment fragmentFavorites;
 	private Fragment fragmentStationsMap;
@@ -48,7 +65,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+		getSupportMenuInflater().inflate(R.menu.mainactivity, menu);
 		
 		return true;
 	}
@@ -88,7 +105,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		mTabHost.addTab(tabSpec_fav);
 		//****** tab2 end
 		
-		OnTabChangeListener listener = null;
+		listener = null;
 		mTabHost.setOnTabChangedListener(listener=new TabHost.OnTabChangeListener() {
 			
 			@Override
@@ -117,4 +134,24 @@ public class MainActivity extends SherlockFragmentActivity {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }*/
+	
+	public void syncNow(MenuItem menuItem){
+		Callback onSyncEnds = new Callback() {
+			@Override
+			public void call() {
+				MainActivity_tabStationsMap fragment = (MainActivity_tabStationsMap) fragmentStationsMap;
+				fragment.loadStationsMarkers();
+			}
+		};
+		Callback onSyncError = new Callback() {
+			@Override
+			public void call() {
+				Toast.makeText(MainActivity.this, "Error al sincronizar.", Toast.LENGTH_SHORT).show();
+				//TODO
+			}
+		};
+		new BikeStationManager().forceSync(onSyncEnds, onSyncError);
+	}
+	
+	
 }

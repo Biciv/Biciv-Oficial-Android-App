@@ -28,6 +28,15 @@ public class BikeStationDAO {
 		return cachedBikeStations.get(stationID);
 	}
 	
+	public ArrayList<BikeStation> getCachedBikeStations() throws NotCachedBikeStations {
+		if(cachedBikeStations == null)
+			throw new NotCachedBikeStations();
+		
+		ArrayList<BikeStation> cachedBikeStationsList = new ArrayList<BikeStation>(cachedBikeStations.values());
+		
+		return cachedBikeStationsList;
+	}
+	
 	public class NotCachedBikeStation extends ToastedException{
 		public int stationID;
 		private NotCachedBikeStation(int stationID){
@@ -36,6 +45,15 @@ public class BikeStationDAO {
 		@Override
 		public String toString() {
 			return "Not cached bike station: "+stationID;
+		}
+	}
+	
+	public class NotCachedBikeStations extends ToastedException{
+		private NotCachedBikeStations(){
+		}
+		@Override
+		public String toString() {
+			return "Not cached bike stations";
 		}
 	}
 	
