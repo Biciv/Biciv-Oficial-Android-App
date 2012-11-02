@@ -1,8 +1,10 @@
 package com.biciv.android.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.biciv.android.R;
@@ -63,13 +65,12 @@ public class MainActivity_tabStationsMap extends SherlockFragment {
 			mapOverlays.clear();
 	    }
 		
-		ArrayList<BikeStation> bikeStations;
 		try {
-			bikeStations = new BikeStationManager().getBikeStations();
-			Iterator<BikeStation> iter = bikeStations.iterator();
+			HashMap<Integer, BikeStation> bikeStations = new BikeStationManager().getBikeStations();
+			Iterator<Entry<Integer, BikeStation>> iter = bikeStations.entrySet().iterator();
 
 			 while (iter.hasNext()) {
-				 BikeStation bikeStation = iter.next();
+				 BikeStation bikeStation = iter.next().getValue();
 				 loadStationMarker(bikeStation);
 			 }
 

@@ -45,13 +45,15 @@ public class BikeStationDAO {
 		return lastHour;
 	}
 	
-	public ArrayList<BikeStation> getCachedBikeStations() throws NotCachedBikeStations {
+	public HashMap<Integer, BikeStation> getCachedBikeStations() throws NotCachedBikeStations {
 		if(cachedBikeStations == null)
 			throw new NotCachedBikeStations();
 		
-		ArrayList<BikeStation> cachedBikeStationsList = new ArrayList<BikeStation>(cachedBikeStations.values());
+		return cachedBikeStations;
 		
-		return cachedBikeStationsList;
+		//ArrayList<BikeStation> cachedBikeStationsList = new ArrayList<BikeStation>(cachedBikeStations.values());
+		
+		//return cachedBikeStationsList;
 	}
 	
 	public class NotCachedBikeStation extends ToastedException{

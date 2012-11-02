@@ -2,6 +2,8 @@ package com.biciv.android.managers;
 
 import com.biciv.android.activities.synchronization.BadSynchronization;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.biciv.android.dao.BikeStationDAO;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
 import com.biciv.android.dao.BikeStationDAO.NotCachedLastHour;
@@ -28,7 +30,7 @@ public class BikeStationManager {
 		return new BikeStationDAO().getCachedBikeStation(bikeStationID);
 	}
 	
-	public ArrayList<BikeStation> getBikeStations() throws NotCachedBikeStations{
+	public HashMap<Integer, BikeStation> getBikeStations() throws NotCachedBikeStations{
 		return new BikeStationDAO().getCachedBikeStations();
 	}
 	
