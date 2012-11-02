@@ -1,6 +1,8 @@
 package com.biciv.android.activities.synchronization;
 
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,8 +14,10 @@ public class AsyncSystem {
 	private ISyncSystem sync;
 	
 	private final static long TIME_BETWEEN_FULL_SYNC = 1000*60*60*24;
+	private final static long TIME_BETWEEN_LASTHOUR_SYNC = 1000*60;
 	
 	private FullSyncTask fullSyncTask = null;
+	private LastHourTask lastHourTask = null;
 	
 	public AsyncSystem(ISyncSystem sync) {
 		this.sync = sync;
@@ -24,7 +28,12 @@ public class AsyncSystem {
 	 * */
 	public void start(){
 		fullSyncTask = new FullSyncTask();
-		fullSyncTask.execute();
+		fullSyncTask.exec();
+	}
+	
+	public void startLastHour(int bikeStationID){
+		lastHourTask = new LastHourTask(bikeStationID);
+		lastHourTask.exec();
 	}
 	
 	/**
@@ -32,7 +41,7 @@ public class AsyncSystem {
 	 * */
 	public void syncNow(){
 		close();
-		fullSyncTask = new FullSyncTask(true);
+		fullSyncTask = new FullSyncTask();
 		fullSyncTask.execute();
 	}
 	
@@ -44,33 +53,40 @@ public class AsyncSystem {
 		if(fullSyncTask != null) {
 			fullSyncTask.cancel(true);
 		}
+		
+		if(lastHourTask != null)
+			lastHourTask.cancel(true);
 	}
 	
 	private class FullSyncTask extends AsyncTask<Void, Boolean, Void>{
 		
-		private final boolean executeNow;
 
-		public FullSyncTask(boolean executeNow){
-			this.executeNow = executeNow;
+		public FullSyncTask(){
 		}
 		
-		public FullSyncTask(){
-			this.executeNow = false;
+		public void exec(){
+			
+			long now = new Date().getTime();
+			long lastUpdated = new BikeStationManager().getLastFullSync();
+			long timeToWait = TIME_BETWEEN_FULL_SYNC - (now - lastUpdated);
+			
+			if(timeToWait > 0){
+				Timer t = new Timer();
+				t.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						execute();
+					}
+				}, timeToWait);
+			} else {
+				execute();
+			}
+			
 		}
 		
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				
-				if(!executeNow){
-					long now = new Date().getTime();
-					long lastUpdated = new BikeStationManager().getLastFullSync();
-					long timeToWait = TIME_BETWEEN_FULL_SYNC - (now - lastUpdated);
-					
-					if(timeToWait > 0)
-						Thread.sleep(timeToWait);
-				}
-				
 				if(isCancelled())
 					return null;
 				
@@ -78,8 +94,6 @@ public class AsyncSystem {
 				publishProgress(false);
 				
 			} catch (BadSynchronization e) {
-				publishProgress(true);
-			} catch (InterruptedException e) {
 				publishProgress(true);
 			}
 			return null;
@@ -96,9 +110,68 @@ public class AsyncSystem {
 			}
 			
 			fullSyncTask = new FullSyncTask();
-			fullSyncTask.execute();
+			fullSyncTask.exec();
 			
 			sync.onSync(SyncSystemSyncTypes.FULLSYNC);
 		}
+	}
+	
+	private class LastHourTask extends AsyncTask<Void, Boolean, Void>{
+		private final int bikeStationID;
+
+		public LastHourTask(int bikeStationID){
+			this.bikeStationID = bikeStationID;
+		}
+		
+		public void exec(){
+			long now = new Date().getTime();
+			long lastUpdated = new BikeStationManager().getLastLastHourSync(bikeStationID);
+			long timeToWait = TIME_BETWEEN_LASTHOUR_SYNC - (now - lastUpdated);
+			
+			if(timeToWait > 0) {
+				Timer t = new Timer();
+				t.schedule(new TimerTask() {
+					
+					@Override
+					public void run() {
+						execute();
+					}
+				}, timeToWait);
+			} else {
+				execute();
+			}
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				if(isCancelled())
+					return null;
+				
+				new BikeStationManager().lastHourSync(bikeStationID);
+				publishProgress(false);
+				
+			} catch (BadSynchronization e) {
+				publishProgress(true);
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Boolean... syncError) {
+			if( isCancelled() )
+				return;
+			
+			if(syncError[0]){
+				sync.onError(SyncSystemSyncTypes.LASTHOURSYNC);
+				return;
+			}
+			
+			lastHourTask = new LastHourTask(bikeStationID);
+			lastHourTask.exec();
+			
+			sync.onSync(SyncSystemSyncTypes.LASTHOURSYNC);
+		}
+		
 	}
 }
