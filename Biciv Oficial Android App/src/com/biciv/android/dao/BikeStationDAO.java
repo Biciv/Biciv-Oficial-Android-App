@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.biciv.android.API.BicivAPI_lastHourBikeStation;
 import com.biciv.android.API.BicivApi_fullBikeStations;
 import com.biciv.android.activities.synchronization.BadSynchronization;
 import com.biciv.android.entities.BikeStation;
@@ -18,7 +19,9 @@ import com.google.gson.reflect.TypeToken;
 public class BikeStationDAO {
 
 	private static HashMap<Integer, BikeStation> cachedBikeStations = null;
+	private static HashMap<Integer, BikeStation.LastHour> cachedLastHourBikeStation = new HashMap<Integer, BikeStation.LastHour>();
 	private static long lastFullCacheTime = -1;
+	private static HashMap<Integer, Long> lastLastHourCacheTime = new HashMap<Integer, Long>();
 
 	public BikeStationDAO() {}
 	
@@ -26,7 +29,19 @@ public class BikeStationDAO {
 		if(cachedBikeStations == null)
 			throw new NotCachedBikeStation(stationID);
 		
-		return cachedBikeStations.get(stationID);
+		BikeStation bikeStation = cachedBikeStations.get(stationID);
+		if(bikeStation == null)
+			throw new NotCachedBikeStation(stationID);
+		
+		return bikeStation;
+	}
+	
+	public BikeStation.LastHour getCachedLastHourBikeStation(int bikeStationID) throws NotCachedLastHour {
+		BikeStation.LastHour lastHour = cachedLastHourBikeStation.get(bikeStationID);
+		if(lastHour == null)
+			throw new NotCachedLastHour(bikeStationID);
+		
+		return lastHour;
 	}
 	
 	public class NotCachedBikeStation extends ToastedException{
@@ -40,6 +55,16 @@ public class BikeStationDAO {
 		}
 	}
 	
+	public class NotCachedLastHour extends ToastedException{
+		public int stationID;
+		private NotCachedLastHour(int stationID){
+			this.stationID = stationID;
+		}
+		@Override
+		public String toString() {
+			return "Not cached lastHour of bike station: "+stationID;
+		}
+	}
 	
 	/*
 	 * TODO
@@ -65,14 +90,27 @@ public class BikeStationDAO {
 		return lastFullCacheTime;
 	}
 	
-	public void getLastHour(int bikeStationID, LastHourCallback onCall , Callback onError){
-		String exampleLastHour = "{\"start\":\"2012/10/30 00:03:08\",\"capacity\":15,\"data\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,14,14]}";		
+	public void lastHourSync(int bikeStationID) throws BadSynchronization{
+		//String exampleLastHour = "{\"start\":\"2012/10/30 00:03:08\",\"capacity\":15,\"data\":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,14,14]}";		
 		
 		try {
-			BikeStation.LastHour lastHour = new Gson().fromJson(exampleLastHour, BikeStation.LastHour.class);
-			onCall.call(lastHour);
+			String lastHourJSON = new BicivAPI_lastHourBikeStation(bikeStationID).call();
+			
+			BikeStation.LastHour lastHour = new Gson().fromJson(lastHourJSON, BikeStation.LastHour.class);
+			cachedLastHourBikeStation.put(bikeStationID, lastHour);
+			lastLastHourCacheTime.put(bikeStationID, new Date().getTime());
+			
 		} catch(JsonSyntaxException e){
-			onError.call();
+			throw new BadSynchronization();
+		} catch (IOException e) {
+			throw new BadSynchronization();
 		}
+	}
+	
+	public long getLastLastHourSync(int bikeStationID){
+		Long lastLastCacheTimeForBikeStation =  lastLastHourCacheTime.get(bikeStationID);
+		if(lastLastCacheTimeForBikeStation == null)
+			return -1;
+		else return lastLastCacheTimeForBikeStation;
 	}
 }
