@@ -52,13 +52,9 @@ public class SingleBikeStation_tabMap extends SherlockFragment {
 	}
 	
 	private void configMapView(){
-
 		MapView mapView = (MapView) tabMapLayoutView.findViewById(R.id.singleBikeStation_map);
 		
 		Integer bikeStationID = getSherlockActivity().getIntent().getExtras().getInt(SingleBikeStation.Params.BIKE_STATION_ID.toString());
-		if(bikeStationID == null){
-			//TODO error.
-		}
 		
 		try {
 			BikeStation bikeStation = new BikeStationManager().getBikeStation(bikeStationID);
@@ -68,7 +64,8 @@ public class SingleBikeStation_tabMap extends SherlockFragment {
 			mc.setCenter( new GeoPoint(lat.intValue(), lng.intValue()) );
 			mc.setZoom(18);
 		} catch (NotCachedBikeStation e) {
-			//TODO
+			e.toastMessage(getSherlockActivity());
+			getSherlockActivity().finish();
 		}
 	}
 	

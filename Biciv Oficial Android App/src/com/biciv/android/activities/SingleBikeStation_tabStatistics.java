@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.biciv.android.R;
@@ -49,14 +48,6 @@ public class SingleBikeStation_tabStatistics extends SherlockFragment {
 	
 	private void prepareStats(){
 		Integer bikeStationID = getSherlockActivity().getIntent().getExtras().getInt(SingleBikeStation.Params.BIKE_STATION_ID.toString());
-		/*
-		 * This situation is not possible since it is checked in the main activity.
-		 * if(bikeStationID == null){
-			//TODO
-			Toast.makeText(getSherlockActivity(), "Error in fragment params.", Toast.LENGTH_SHORT).show();
-			getSherlockActivity().finish();
-			return;
-		}*/
 		
 		new BikeStationManager().askLastHour(bikeStationID, new LastHourCallback() {
 			

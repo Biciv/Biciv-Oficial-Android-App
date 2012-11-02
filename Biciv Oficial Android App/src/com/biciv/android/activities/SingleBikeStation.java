@@ -1,13 +1,10 @@
 package com.biciv.android.activities;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
@@ -18,16 +15,16 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.biciv.android.R;
+import com.biciv.android.activities.synchronization.AsyncSystem;
+import com.biciv.android.activities.synchronization.ISyncSystem;
+import com.biciv.android.activities.synchronization.SyncSystemSyncTypes;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
 import com.biciv.android.entities.BikeStation;
 import com.biciv.android.managers.BikeStationManager;
-import com.biciv.android.managers.Callback;
-import com.google.android.maps.MapView;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
-public class SingleBikeStation extends SherlockFragmentActivity {
+public class SingleBikeStation extends SherlockFragmentActivity implements ISyncSystem {
 
 	private TabHost mTabHost;
 	private Fragment fragmentStats;
@@ -35,9 +32,11 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 
 	private static String tabTagSTATS = "STATS";
 	private static String tabTagMAP = "MAP";
-	private static String tabTagSOCIAL = "SOCIAL";
+	private static String tabTagSOCIAL = "SOCIAL"; //TODO
 	
 	private Integer bikeStationID;
+	
+	private AsyncSystem asyncSystem;
 	
 	public static enum Params {
 		BIKE_STATION_ID
@@ -82,14 +81,14 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 		
 		initialiseTabHost(savedInstanceState);
 		
-		/*try {
+		try {
 			BikeStation bikeStation = new BikeStationManager().getBikeStation(bikeStationID);
 			setBikeStationData(bikeStation);
 		} catch (NotCachedBikeStation e) {
 			e.toastMessage(this);
-			finish();
-			return;
-		}*/
+//			finish(); TODO - Uncomment this after merge.
+//			return;
+		}
 	}
 
 	@Override
@@ -100,27 +99,7 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 	}
 	
 	public void syncNow(MenuItem menuItem){
-		Callback onSyncEnds = new Callback() {
-			@Override
-			public void call() {
-				try {
-					BikeStation bikeStation = new BikeStationManager().getBikeStation(bikeStationID);
-					setBikeStationData(bikeStation);
-				} catch (NotCachedBikeStation e) {
-					e.toastMessage(SingleBikeStation.this);
-					finish();
-					return;
-				}
-			}
-		};
-		Callback onSyncError = new Callback() {
-			@Override
-			public void call() {
-				Toast.makeText(SingleBikeStation.this, "Error al sincronizar.", Toast.LENGTH_SHORT).show();
-				//TODO
-			}
-		};
-		new BikeStationManager().forceSync(onSyncEnds, onSyncError);
+		asyncSystem.syncNow();
 	}
 	
 	public void setBikeStationData(BikeStation bikeStation){
@@ -190,4 +169,36 @@ public class SingleBikeStation extends SherlockFragmentActivity {
 		listener.onTabChanged(tabTagSTATS);
 	}
 
+	@Override
+	public void onSync(SyncSystemSyncTypes syncType) {
+		try {
+			BikeStation bikeStation = new BikeStationManager().getBikeStation(bikeStationID);
+			setBikeStationData(bikeStation);
+		} catch (NotCachedBikeStation e) {
+			e.toastMessage(this);
+			finish();
+			return;
+		}
+	}
+
+	@Override
+	public void onError(SyncSystemSyncTypes syncType) {
+		Toast.makeText(SingleBikeStation.this, "Error al sincronizar.", Toast.LENGTH_SHORT).show();
+		//TODO
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		asyncSystem.close();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		asyncSystem = new AsyncSystem(this);
+		asyncSystem.start();
+	}
 }

@@ -22,6 +22,10 @@ import com.actionbarsherlock.view.MenuItem;
 import com.biciv.android.R;
 import com.biciv.android.R.layout;
 import com.biciv.android.R.menu;
+import com.biciv.android.activities.synchronization.AsyncSystem;
+import com.biciv.android.activities.synchronization.BadSynchronization;
+import com.biciv.android.activities.synchronization.ISyncSystem;
+import com.biciv.android.activities.synchronization.SyncSystemSyncTypes;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStation;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStations;
 import com.biciv.android.entities.BikeStation;
@@ -31,7 +35,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class MainActivity extends SherlockFragmentActivity {
+public class MainActivity extends SherlockFragmentActivity implements ISyncSystem{
 	
 	private TabHost mTabHost;
 	
@@ -39,6 +43,8 @@ public class MainActivity extends SherlockFragmentActivity {
 	
 	private Fragment fragmentFavorites;
 	private Fragment fragmentStationsMap;
+
+	private AsyncSystem asyncSystem;
 	
 	private class TabFactory implements TabHost.TabContentFactory {
 		private final Context mContext;
@@ -136,21 +142,33 @@ public class MainActivity extends SherlockFragmentActivity {
     }*/
 	
 	public void syncNow(MenuItem menuItem){
-		Callback onSyncEnds = new Callback() {
-			@Override
-			public void call() {
-				MainActivity_tabStationsMap fragment = (MainActivity_tabStationsMap) fragmentStationsMap;
-				fragment.loadStationsMarkers();
-			}
-		};
-		Callback onSyncError = new Callback() {
-			@Override
-			public void call() {
-				Toast.makeText(MainActivity.this, "Error al sincronizar.", Toast.LENGTH_SHORT).show();
-				//TODO
-			}
-		};
-		new BikeStationManager().forceSync(onSyncEnds, onSyncError);
+		asyncSystem.syncNow();
+	}
+
+	@Override
+	public void onSync(SyncSystemSyncTypes syncType) {
+		MainActivity_tabStationsMap fragment = (MainActivity_tabStationsMap) fragmentStationsMap;
+		fragment.loadStationsMarkers();
+	}
+
+	@Override
+	public void onError(SyncSystemSyncTypes syncType) {
+		Toast.makeText(MainActivity.this, "Error al sincronizar.", Toast.LENGTH_SHORT).show();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		asyncSystem.close();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		asyncSystem = new AsyncSystem(this);
+		asyncSystem.start();
 	}
 	
 	
