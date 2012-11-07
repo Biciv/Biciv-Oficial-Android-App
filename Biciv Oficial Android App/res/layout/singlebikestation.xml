@@ -75,6 +75,13 @@
                 android:layout_weight="1" >
             </FrameLayout>
 
+<!--             <FrameLayout -->
+<!--                 android:id="@+id/singleBikeStation_tabContent" -->
+<!--                 android:layout_width="match_parent" -->
+<!--                 android:layout_height="0dp" -->
+<!--                 android:layout_weight="1" > -->
+<!--             </FrameLayout> -->
+
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
