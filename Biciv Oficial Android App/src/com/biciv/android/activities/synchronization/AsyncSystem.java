@@ -61,6 +61,8 @@ public class AsyncSystem {
 	private class FullSyncTask extends AsyncTask<Void, Boolean, Void>{
 		
 
+		private Timer _t = null;
+
 		public FullSyncTask(){
 		}
 		
@@ -71,8 +73,8 @@ public class AsyncSystem {
 			long timeToWait = TIME_BETWEEN_FULL_SYNC - (now - lastUpdated);
 			
 			if(timeToWait > 0){
-				Timer t = new Timer();
-				t.schedule(new TimerTask() {
+				_t = new Timer();
+				_t.schedule(new TimerTask() {
 					@Override
 					public void run() {
 						execute();
@@ -114,10 +116,17 @@ public class AsyncSystem {
 			
 			sync.onSync(SyncSystemSyncTypes.FULLSYNC);
 		}
+
+		@Override
+		protected void onCancelled() {
+			if(_t != null)
+				_t.cancel();
+		}
 	}
 	
 	private class LastHourTask extends AsyncTask<Void, Boolean, Void>{
 		private final int bikeStationID;
+		private Timer _t = null;
 
 		public LastHourTask(int bikeStationID){
 			this.bikeStationID = bikeStationID;
@@ -129,8 +138,8 @@ public class AsyncSystem {
 			long timeToWait = TIME_BETWEEN_LASTHOUR_SYNC - (now - lastUpdated);
 			
 			if(timeToWait > 0) {
-				Timer t = new Timer();
-				t.schedule(new TimerTask() {
+				_t = new Timer();
+				_t.schedule(new TimerTask() {
 					
 					@Override
 					public void run() {
@@ -172,6 +181,14 @@ public class AsyncSystem {
 			
 			sync.onSync(SyncSystemSyncTypes.LASTHOURSYNC);
 		}
+
+		@Override
+		protected void onCancelled() {
+			if(_t != null)
+				_t.cancel();
+		}
+		
+		
 		
 	}
 }
