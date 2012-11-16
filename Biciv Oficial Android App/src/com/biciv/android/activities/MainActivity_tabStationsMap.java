@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.biciv.android.R;
+import com.biciv.android.activities.synchronization.LoadBikeStationsOnMapAsync;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStations;
 import com.biciv.android.entities.BikeStation;
 import com.biciv.android.managers.BikeStationManager;
@@ -16,6 +17,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,7 +26,9 @@ import android.view.ViewGroup;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
 public class MainActivity_tabStationsMap extends SherlockFragment {
+	public static Activity activity;
 	public static MapView mapView;
+	@Deprecated
 	public static List<Overlay> mapOverlays;
 
 	@Override
@@ -39,11 +43,10 @@ public class MainActivity_tabStationsMap extends SherlockFragment {
 			// the view hierarchy; it would just never be used.
 			return null;
 		}
+		if(activity == null) activity = getSherlockActivity();
 		if(mapView == null) {
-			mapView = (MapView) getSherlockActivity().getLayoutInflater().inflate(R.layout.mainactivity_tabstationsmap, container, false);
+			mapView = (MapView) activity.getLayoutInflater().inflate(R.layout.mainactivity_tabstationsmap, container, false);
 			mapView.setBuiltInZoomControls(true);
-			
-			mapOverlays = mapView.getOverlays();
 			
 			MapController mc = mapView.getController();
 			mc.setCenter( new GeoPoint((int) (39.47818 * 1E6), (int) (-0.38354* 1E6)) );
@@ -53,46 +56,18 @@ public class MainActivity_tabStationsMap extends SherlockFragment {
 		ViewGroup parent = (ViewGroup) mapView.getParent();
 		if(parent != null)
 			parent.removeView(mapView);
-		
 		loadStationsMarkers();
 		
 		return mapView;
 	}
 	
 	public void loadStationsMarkers(){
-		if(!mapOverlays.isEmpty()) 
-	    { 
-			mapOverlays.clear();
-	    }
-		
 		try {
 			HashMap<Integer, BikeStation> bikeStations = new BikeStationManager().getBikeStations();
-			Iterator<Entry<Integer, BikeStation>> iter = bikeStations.entrySet().iterator();
-
-			 while (iter.hasNext()) {
-				 BikeStation bikeStation = iter.next().getValue();
-				 loadStationMarker(bikeStation);
-			 }
-
-			 mapView.invalidate();
+			LoadBikeStationsOnMapAsync task = new LoadBikeStationsOnMapAsync(activity, mapView, bikeStations);
+			task.execute();			
 		} catch (NotCachedBikeStations e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	private void loadStationMarker(BikeStation bikeStation){
-		Context context = getSherlockActivity();
-		
-	    GeoPoint CENTER_POINT = new GeoPoint((int) (bikeStation.getLat() * 1E6), (int) (bikeStation.getLng()* 1E6));
-	    
-		MainActivity_StationMapMarker mapMarker = new MainActivity_StationMapMarker(CENTER_POINT, "", "", bikeStation, context);
-		
-		MainActivity_StationMapOverlay itemizedOverlay = new MainActivity_StationMapOverlay(mapMarker.getDefaultMarker(), context);
-			
-		itemizedOverlay.addOverlay(mapMarker);
-		
-		mapOverlays.add(itemizedOverlay);
-	}
-
 }
