@@ -8,10 +8,11 @@ import java.util.Map.Entry;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.biciv.android.R;
-import com.biciv.android.activities.synchronization.LoadBikeStationsOnMapAsync;
 import com.biciv.android.dao.BikeStationDAO.NotCachedBikeStations;
 import com.biciv.android.entities.BikeStation;
 import com.biciv.android.managers.BikeStationManager;
+import com.biciv.android.module.LoadBikeStationsOnMapAsync;
+import com.biciv.android.module.LocationService;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -19,6 +20,7 @@ import com.google.android.maps.Overlay;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +51,13 @@ public class MainActivity_tabStationsMap extends SherlockFragment {
 			mapView.setBuiltInZoomControls(true);
 			
 			MapController mc = mapView.getController();
-			mc.setCenter( new GeoPoint((int) (39.47818 * 1E6), (int) (-0.38354* 1E6)) );
+			
+			LocationService locationService = new LocationService(activity);
+			Location current = locationService.getCurrentLocation();
+			
+			if(current == null) mc.setCenter( new GeoPoint((int) (39.47818 * 1E6), (int) (-0.38354* 1E6)) );
+			else mc.setCenter( new GeoPoint((int) current.getLatitude(), (int) current.getLongitude()) );
+
 			mc.setZoom(18);
 		}
 		

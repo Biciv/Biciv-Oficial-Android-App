@@ -1,4 +1,4 @@
-package com.biciv.android.activities.synchronization;
+package com.biciv.android.module;
 
 import java.util.ArrayList;
 import java.util.HashMap;
