@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -37,67 +38,66 @@ public class LoadBikeStationsOnMapAsync {
 		this.bikeStations = bikeStations;
 		this.mapOverlays = mapView.getOverlays();
 		
-		if(!this.mapOverlays.isEmpty()) 
-	    { 
+		if(!this.mapOverlays.isEmpty()) { 
 			this.mapOverlays.clear();
 	    }
 	}
 	
-	public void execute(){
-		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-		
+	public void execute(){		
 		CreateBikeStationsBitmapsAsyncTask task = new CreateBikeStationsBitmapsAsyncTask();
-		task.execute(inflater, bikeStations);		
+		task.execute();		
 	}
 
-	private class CreateBikeStationsBitmapsAsyncTask extends AsyncTask<Object, Object, Void>{
+	private class CreateBikeStationsBitmapsAsyncTask extends AsyncTask<Void, MainActivity_StationMapOverlay, Void>{
 
 		protected void onPreExecute() {
 		}
 		
 		@Override
-		protected Void doInBackground(Object... params) {
-			LayoutInflater layoutInflater = (LayoutInflater) params[0];
-			HashMap<Integer, BikeStation> bikeStations = (HashMap<Integer, BikeStation>) params[1];
-
+		protected Void doInBackground(Void... params) {
 			Iterator<Entry<Integer, BikeStation>> iter = bikeStations.entrySet().iterator();
 
 			while (iter.hasNext()) {
+				if(isCancelled()) 
+					return null;
+				
 				Entry<Integer, BikeStation> entry = iter.next();
+				
 				BikeStation bikeStation = entry.getValue();
-				publishProgress(entry.getKey(), LoadBikeStationsOnMapAsync.getBikeStationDefaultMarker(layoutInflater, bikeStation));
+				
+				Drawable drawOverlay = LoadBikeStationsOnMapAsync.getDrawableBikeStationMarker(mContext, bikeStation);
+				
+				GeoPoint CENTER_POINT = new GeoPoint((int) (bikeStation.getLat() * 1E6), (int) (bikeStation.getLng()* 1E6));
+				MainActivity_StationMapMarker mapMarker = new MainActivity_StationMapMarker(CENTER_POINT, "", "", bikeStation);
+				
+				MainActivity_StationMapOverlay itemizedOverlay = new MainActivity_StationMapOverlay(drawOverlay, mContext);
+
+				itemizedOverlay.addOverlay(mapMarker);
+				
+				publishProgress(itemizedOverlay);
 			}
 			
 			return null;
 		}
 		
 		@Override
-		protected void onProgressUpdate(Object... values) {
-			Integer keyBikeStation = (Integer) values[0];
-			Bitmap bitmap = (Bitmap) values[1];
-			
-			BikeStation bikeStation = bikeStations.get(keyBikeStation);
-			
-			Drawable drawOverlay = new BitmapDrawable(mContext.getResources(), bitmap);
-			
-			GeoPoint CENTER_POINT = new GeoPoint((int) (bikeStation.getLat() * 1E6), (int) (bikeStation.getLng()* 1E6));
-			MainActivity_StationMapMarker mapMarker = new MainActivity_StationMapMarker(CENTER_POINT, "", "", bikeStation);
-
-			MainActivity_StationMapOverlay itemizedOverlay = new MainActivity_StationMapOverlay(drawOverlay, mContext);
-
-			itemizedOverlay.addOverlay(mapMarker);
-			
-			mapOverlays.add(itemizedOverlay);
+		protected void onProgressUpdate(MainActivity_StationMapOverlay... values) {
+			if(isCancelled()) 
+				return;
+			mapOverlays.add(values[0]);
+			mapView.invalidate();
 		}
 
 		protected void onPostExecute(Void a) {
-			mapView.invalidate();
+			if(isCancelled()) 
+				return;
 		}
 	}
 	
-	public static Bitmap getBikeStationDefaultMarker(LayoutInflater inflater, BikeStation bikeStation) {
+	public static Drawable getDrawableBikeStationMarker(Context context, BikeStation bikeStation) {
 		Bitmap viewCapture = null;
         
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         LinearLayout markerLayout = (LinearLayout) inflater.inflate(R.layout.mainactivity_tabstationsmap_marker, null);
 		
         TextView avaiableBikes = (TextView) markerLayout.findViewById(R.id.mainactivity_tabstationmap_marker_availableBikes);
@@ -123,6 +123,8 @@ public class LoadBikeStationsOnMapAsync {
 
         markerLayout.setDrawingCacheEnabled(false);
         
-        return viewCapture;
+        Drawable drawOverlay = new BitmapDrawable(context.getResources(), viewCapture);
+        
+        return drawOverlay;
 	}	
 }
