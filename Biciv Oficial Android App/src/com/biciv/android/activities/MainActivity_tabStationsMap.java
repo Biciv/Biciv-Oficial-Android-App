@@ -28,10 +28,8 @@ import android.view.ViewGroup;
 
 //http://thepseudocoder.wordpress.com/2011/10/04/android-tabs-the-fragment-way/
 public class MainActivity_tabStationsMap extends SherlockFragment {
-	public static Activity activity;
-	public static MapView mapView;
-	@Deprecated
-	public static List<Overlay> mapOverlays;
+	public static View mapViewLayout;
+	private LoadBikeStationsOnMapAsync task;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,34 +43,53 @@ public class MainActivity_tabStationsMap extends SherlockFragment {
 			// the view hierarchy; it would just never be used.
 			return null;
 		}
-		if(activity == null) activity = getSherlockActivity();
-		if(mapView == null) {
-			mapView = (MapView) activity.getLayoutInflater().inflate(R.layout.mainactivity_tabstationsmap, container, false);
-			mapView.setBuiltInZoomControls(true);
-			
-			MapController mc = mapView.getController();
-			
-			LocationService locationService = new LocationService(activity);
-			Location current = locationService.getCurrentLocation();
-			
-			if(current == null) mc.setCenter( new GeoPoint((int) (39.47818 * 1E6), (int) (-0.38354* 1E6)) );
-			else mc.setCenter( new GeoPoint((int) current.getLatitude(), (int) current.getLongitude()) );
-
-			mc.setZoom(18);
+		
+		if(mapViewLayout == null) {
+			mapViewLayout = getSherlockActivity().getLayoutInflater().inflate(R.layout.mainactivity_tabstationsmap, null);
 		}
 		
-		ViewGroup parent = (ViewGroup) mapView.getParent();
+		ViewGroup parent = (ViewGroup) mapViewLayout.getParent();
 		if(parent != null)
-			parent.removeView(mapView);
-		loadStationsMarkers();
+			parent.removeView(mapViewLayout);
 		
-		return mapView;
+		configMap();
+		
+		return mapViewLayout;
 	}
 	
+	private void configMap(){
+		MapView mapView = (MapView) mapViewLayout.findViewById(R.id.mainActivity_map);
+		
+		MapController mc = mapView.getController();
+		
+		LocationService locationService = new LocationService(getSherlockActivity());
+		Location current = locationService.getCurrentLocation();
+		
+		if(current == null) mc.setCenter( new GeoPoint((int) (39.47818 * 1E6), (int) (-0.38354* 1E6)) );
+		else mc.setCenter( new GeoPoint((int) current.getLatitude(), (int) current.getLongitude()) );
+
+		mc.setZoom(18);		
+	}
+	
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		task.close();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		loadStationsMarkers();
+	}
+
 	public void loadStationsMarkers(){
 		try {
+			MapView mapView = (MapView) mapViewLayout.findViewById(R.id.mainActivity_map);
+			
 			HashMap<Integer, BikeStation> bikeStations = new BikeStationManager().getBikeStations();
-			LoadBikeStationsOnMapAsync task = new LoadBikeStationsOnMapAsync(activity, mapView, bikeStations);
+			task = new LoadBikeStationsOnMapAsync(getSherlockActivity(), mapView, bikeStations);
 			task.execute();			
 		} catch (NotCachedBikeStations e) {
 			e.printStackTrace();

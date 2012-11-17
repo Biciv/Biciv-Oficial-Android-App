@@ -31,6 +31,7 @@ public class LoadBikeStationsOnMapAsync {
 	private Context mContext;
 	private HashMap<Integer, BikeStation> bikeStations;
 	private List<Overlay> mapOverlays;
+	private CreateBikeStationsBitmapsAsyncTask task;
 
 	public LoadBikeStationsOnMapAsync(Context context, MapView mapView, HashMap<Integer, BikeStation> bikeStations){
 		this.mapView = mapView;
@@ -44,8 +45,12 @@ public class LoadBikeStationsOnMapAsync {
 	}
 	
 	public void execute(){		
-		CreateBikeStationsBitmapsAsyncTask task = new CreateBikeStationsBitmapsAsyncTask();
+		task = new CreateBikeStationsBitmapsAsyncTask();
 		task.execute();		
+	}
+	
+	public void close(){
+		task.cancel(true);
 	}
 
 	private class CreateBikeStationsBitmapsAsyncTask extends AsyncTask<Void, MainActivity_StationMapOverlay, Void>{
