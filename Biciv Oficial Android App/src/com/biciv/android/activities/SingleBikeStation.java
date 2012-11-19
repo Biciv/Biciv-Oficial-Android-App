@@ -86,8 +86,8 @@ public class SingleBikeStation extends SherlockFragmentActivity implements ISync
 			setBikeStationData(bikeStation);
 		} catch (NotCachedBikeStation e) {
 			e.toastMessage(this);
-//			finish(); TODO - Uncomment this after merge.
-//			return;
+			finish();
+			return;
 		}
 	}
 
