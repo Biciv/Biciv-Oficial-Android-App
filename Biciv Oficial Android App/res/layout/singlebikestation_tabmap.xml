@@ -3,5 +3,5 @@
     android:id="@+id/singleBikeStation_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:apiKey="0vg9iD3PZ5qqkxwzZkhPPQ_87KpW03CrA39k2zQ"
+    android:apiKey="@string/gmaps_apikey"
     android:clickable="true" />
