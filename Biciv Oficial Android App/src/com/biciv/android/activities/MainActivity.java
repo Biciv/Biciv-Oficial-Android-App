@@ -45,6 +45,9 @@ public class MainActivity extends SherlockFragmentActivity implements ISyncSyste
 	private Fragment fragmentStationsMap;
 
 	private AsyncSystem asyncSystem;
+
+	private static String tabTagFAV = "FAV";
+	private static String tabTagSTATIONSMAP = "STATIONSMAP";
 	
 	private class TabFactory implements TabHost.TabContentFactory {
 		private final Context mContext;
@@ -84,31 +87,26 @@ public class MainActivity extends SherlockFragmentActivity implements ISyncSyste
 		mTabHost.setup();
 		
 		//****** tab1 start
-		TabHost.TabSpec tabSpec_stationsmap = mTabHost.newTabSpec("STATIONSMAP");
-		tabSpec_stationsmap.setIndicator("Estaciones");
+		TabHost.TabSpec tabSpec_stationsmap = mTabHost.newTabSpec(tabTagSTATIONSMAP);
+		tabSpec_stationsmap.setIndicator(getString(R.string.mainActivity_tabStationsMap));
 		tabSpec_stationsmap.setContent(new TabFactory(this));
-		String tagStats = tabSpec_stationsmap.getTag();
+		mTabHost.addTab(tabSpec_stationsmap);
 		
-		FragmentManager fm = this.getSupportFragmentManager();
-		fragmentStationsMap = fm.findFragmentByTag(tagStats);
+		fragmentStationsMap = getSupportFragmentManager().findFragmentByTag(tabTagSTATIONSMAP);
 		if(fragmentStationsMap == null)
 			fragmentStationsMap = Fragment.instantiate(this, MainActivity_tabStationsMap.class.getName(), savedInstanceState);
-		
-		mTabHost.addTab(tabSpec_stationsmap);
+	
 		//****** tab1 end
 		
 		//****** tab2 start
-		TabHost.TabSpec tabSpec_fav = mTabHost.newTabSpec("FAV");
-		tabSpec_fav.setIndicator("Favoritas");
+		TabHost.TabSpec tabSpec_fav = mTabHost.newTabSpec(tabTagFAV);
+		tabSpec_fav.setIndicator(getString(R.string.mainActivity_tabFavorites));
 		tabSpec_fav.setContent(new TabFactory(this));
-		String tagMap = tabSpec_fav.getTag();
+		mTabHost.addTab(tabSpec_fav);
 		
-		fm = this.getSupportFragmentManager();
-		fragmentFavorites = fm.findFragmentByTag(tagMap);
+		fragmentFavorites = getSupportFragmentManager().findFragmentByTag(tabTagFAV);
 		if(fragmentFavorites == null)
 			fragmentFavorites = Fragment.instantiate(this, MainActivity_tabStationsMap.class.getName(), savedInstanceState);
-		
-		mTabHost.addTab(tabSpec_fav);
 		//****** tab2 end
 		
 		listener = null;

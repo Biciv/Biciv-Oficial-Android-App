@@ -22,49 +22,11 @@ public class MainActivity_StationMapMarker extends OverlayItem {
 	private int mAvailableHollows;
 	private Context mContext;
 	
-	public MainActivity_StationMapMarker(GeoPoint pt, String label, String snippet, BikeStation bikeStation, Context context) {
+	public MainActivity_StationMapMarker(GeoPoint pt, String label, String snippet, BikeStation bikeStation) {
 		super(pt, label, snippet);
-		
 		this.mAvailableBikes = bikeStation.getAvailable();
 		this.mAvailableHollows = bikeStation.getFree();
 		this.mStationID = bikeStation.getId();
-		this.mContext = context;
-				
-	}
-	
-	public Drawable getDefaultMarker() {
-		Bitmap viewCapture = null;
-        Drawable drawOverlay = null;
-        
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        
-        LinearLayout markerLayout = (LinearLayout) inflater.inflate(R.layout.mainactivity_tabstationsmap_marker, null);
-		
-        TextView avaiableBikes = (TextView) markerLayout.findViewById(R.id.mainactivity_tabstationmap_marker_availableBikes);
-		avaiableBikes.setText(""+mAvailableBikes);
-		
-		TextView availableHollows = (TextView) markerLayout.findViewById(R.id.mainactivity_tabstationmap_marker_availableHollows);
-		availableHollows.setText(""+mAvailableHollows);
-		
-		// we need to enable the drawing cache
-		markerLayout.setDrawingCacheEnabled(true);
-		
-		// this is the important code
-        // Without it the view will have a dimension of 0,0 and the bitmap
-        // will be null
-		markerLayout.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        markerLayout.layout(0, 0, markerLayout.getMeasuredWidth(), markerLayout.getMeasuredHeight());
-        
-        // we need to build our drawing cache
-        markerLayout.buildDrawingCache(true);
-        
-        viewCapture = Bitmap.createBitmap(markerLayout
-                .getDrawingCache());
-
-        markerLayout.setDrawingCacheEnabled(false);
-        drawOverlay = new BitmapDrawable(mContext.getResources(),viewCapture);
-        
-        return drawOverlay;
 	}
 	
 	public int getStationID(){
