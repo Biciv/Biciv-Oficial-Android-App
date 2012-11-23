@@ -41,4 +41,11 @@ public class BikeStationManager {
 	public BikeStation.LastHour getLastHour(int bikeStationID) throws NotCachedLastHour{
 		return new BikeStationDAO().getCachedLastHourBikeStation(bikeStationID);
 	}
+	
+	public void setBikeStationFavourite(int bikeStationID) throws NotCachedBikeStation{
+		new BikeStationDAO().setBikeStationAsFavourite(bikeStationID);
+	}
+	public void removeBikeStationFavourite(int bikeStationID) throws NotCachedBikeStation{
+		new BikeStationDAO().removeBikeStationAsFavourite(bikeStationID);
+	}
 }

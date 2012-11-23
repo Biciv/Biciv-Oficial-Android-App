@@ -12,6 +12,16 @@ public class BikeStation {
 	private int free = 0;
 	private String lastCheck = "0/0/0 0:0:0";
 	private ArrayList<Boolean> incidents;
+	
+	private boolean isFavourite = false;
+
+	public boolean isFavourite() {
+		return isFavourite;
+	}
+
+	public void setFavourite(boolean isFavourite) {
+		this.isFavourite = isFavourite;
+	}
 
 	public BikeStation(int id, String address, double lat, double lng,
 			boolean credit, int available, int free, String lastCheck,
