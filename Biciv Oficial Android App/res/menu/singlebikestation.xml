@@ -7,5 +7,12 @@
         android:onClick="syncNow"
         android:showAsAction="ifRoom">
     </item>
+    <item
+        android:id="@+id/singleBikeStation_favourite"
+        android:onClick="favouriteStation"
+        android:showAsAction="always"
+        android:title="@string/singleBikeStation_menuFavourite"
+        android:icon="@android:drawable/star_off">
+    </item>
 
 </menu>

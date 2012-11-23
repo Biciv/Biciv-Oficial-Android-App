@@ -11,5 +11,6 @@
     <string name="mainActivity_tabStationsMap">Estaciones</string>
     <string name="mainActivity_tabFavorites">Favoritas</string>
     <string name="mainActivity_title">Biciv Oficial Android App</string>
+    <string name="singleBikeStation_menuFavourite">Añadir a favoritas</string>
 
 </resources>
