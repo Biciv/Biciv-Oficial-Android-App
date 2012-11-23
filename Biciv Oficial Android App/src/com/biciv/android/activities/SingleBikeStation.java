@@ -95,11 +95,37 @@ public class SingleBikeStation extends SherlockFragmentActivity implements ISync
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.singlebikestation, menu);
+		
+		MenuItem menuItem = menu.findItem(R.id.singleBikeStation_favourite);
+		try {
+			if( new BikeStationManager().getBikeStation(bikeStationID).isFavourite() ) {
+				menuItem.setIcon(android.R.drawable.star_on);
+			} else {
+				menuItem.setIcon(android.R.drawable.star_off);
+			}
+		} catch (NotCachedBikeStation e) {
+			e.printStackTrace();
+		}
+		
 		return true;
 	}
 	
 	public void syncNow(MenuItem menuItem){
 		asyncSystem.syncNow();
+	}
+	
+	public void favouriteStation(MenuItem menuItem){
+		try {
+			if( new BikeStationManager().getBikeStation(bikeStationID).isFavourite() ) {
+				new BikeStationManager().removeBikeStationFavourite(bikeStationID);
+				menuItem.setIcon(android.R.drawable.star_off);
+			} else {
+				new BikeStationManager().setBikeStationFavourite(bikeStationID);
+				menuItem.setIcon(android.R.drawable.star_on);
+			}
+		} catch (NotCachedBikeStation e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setBikeStationData(BikeStation bikeStation){

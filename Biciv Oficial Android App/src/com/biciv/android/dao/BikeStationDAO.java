@@ -134,4 +134,14 @@ public class BikeStationDAO {
 			return -1;
 		else return lastLastCacheTimeForBikeStation;
 	}
+	
+	public void setBikeStationAsFavourite(int bikeStationID) throws NotCachedBikeStation{
+		BikeStation bikeStation = this.getCachedBikeStation(bikeStationID);
+		bikeStation.setFavourite(true);
+	}
+	
+	public void removeBikeStationAsFavourite(int bikeStationID) throws NotCachedBikeStation{
+		BikeStation bikeStation = this.getCachedBikeStation(bikeStationID);
+		bikeStation.setFavourite(false);
+	}
 }
